@@ -1,0 +1,23 @@
+<?php
+
+namespace Modules\Marketplace\Transformers;
+
+use Illuminate\Http\Resources\Json\Resource;
+use Modules\User\Transformers\UserProfileTransformer;
+use Illuminate\Support\Arr;
+
+class CommentTransformer extends Resource
+{
+  public function toArray($request)
+  {
+    $data = [
+        'id' => $this->when($this->id, $this->id),
+        'body' => $this->when($this->body, $this->body),
+        'user' => new UserProfileTransformer($this->whenLoaded('user')),
+    ];
+
+
+    return $data;
+
+  }
+}
