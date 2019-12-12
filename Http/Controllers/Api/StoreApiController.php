@@ -101,15 +101,15 @@ class StoreApiController extends BaseApiController
     {
         \DB::beginTransaction();
         try {
-            $data = $request->input('attributes') ?? [];//Get data  
+            $data = $request->input('attributes') ?? [];//Get data
             //Validate Request
-            $this->history->create($request,0);
 
             $this->validateRequestApi(new CreateStoreRequest($data));
 
             //Create item
             $dataEntity = $this->store->create($data);
-
+            //History
+            $this->history->create($request,$dataEntity->id);
             //Response
             $response = ["data" => new StoreTransformer($dataEntity)];
             \DB::commit(); //Commit to Data Base

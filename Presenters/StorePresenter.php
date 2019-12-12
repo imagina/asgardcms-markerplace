@@ -12,14 +12,14 @@ class StorePresenter extends Presenter
      */
     protected $status;
     /**
-     * @var \Modules\Marketplace\Repositories\PostRepository
+     * @var \Modules\Marketplace\Repositories\StoreRepository
      */
     private $store;
 
     public function __construct($entity)
     {
         parent::__construct($entity);
-        $this->store = app('Modules\Marketplace\Repositories\PostRepository');
+        $this->store = app('Modules\Marketplace\Repositories\StoreRepository');
         $this->status = app('Modules\Marketplace\Entities\Status');
     }
 

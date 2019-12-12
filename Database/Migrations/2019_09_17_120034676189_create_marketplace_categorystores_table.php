@@ -16,6 +16,7 @@ class CreateMarketplaceCategoryStoresTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('parent_id')->default(0);
+            $table->text('icon')->nullable();
             $table->integer('lft')->unsigned()->nullable();
             $table->integer('rgt')->unsigned()->nullable();
             $table->integer('depth')->unsigned()->nullable();

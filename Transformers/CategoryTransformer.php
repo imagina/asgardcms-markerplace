@@ -3,6 +3,7 @@
 namespace Modules\Marketplace\Transformers;
 
 use Illuminate\Http\Resources\Json\Resource;
+use Modules\Marketplace\Entities\Store;
 use Modules\User\Transformers\UserProfileTransformer;
 use Illuminate\Support\Arr;
 
@@ -11,10 +12,11 @@ class CategoryTransformer extends Resource
   public function toArray($request)
   {
     $data = [
-        'id' => $this->when($this->id, $this->id),
+        'id' => (int)$this->when($this->id, $this->id),
         'title' => $this->when($this->title, $this->title),
         'slug' => $this->when($this->slug, $this->slug),
         'description' => $this->description ?? '',
+        'icon'=>$this->when($this->icon, $this->icon),
         'metaTitle' => $this->when($this->meta_title, $this->meta_title),
         'metaDescription' => $this->when($this->meta_description, $this->meta_description),
         'metaKeywords' => $this->when($this->meta_keywords, $this->meta_keywords),
@@ -26,6 +28,7 @@ class CategoryTransformer extends Resource
         'parent' => new CategoryTransformer($this->whenLoaded('parent')),
         'parentId' => $this->parent_id,
         'children' => CategoryTransformer::collection($this->whenLoaded('children')),
+        'stores'=>StoreTransformer::collection($this->whenLoaded('stores')),
     ];
 
     $filter = json_decode($request->filter);

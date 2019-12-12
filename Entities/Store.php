@@ -9,16 +9,17 @@ use Modules\Marketplace\Presenters\StorePresenter;
 use Modules\Media\Entities\File;
 use Modules\Media\Support\Traits\MediaRelation;
 use Modules\Core\Traits\NamespacedEntity;
-
-
+use willvincent\Rateable\Rateable;
+use Modules\Icommerce\Entities\PaymentMethod;
+use Modules\Icommerce\Entities\ShippingMethod;
 class Store extends Model
 {
-    use Translatable, PresentableTrait, NamespacedEntity, MediaRelation;
+    use Translatable, PresentableTrait, NamespacedEntity, MediaRelation,Rateable;
 
     protected $table = 'marketplace__stores';
     protected static $entityNamespace = 'asgardcms/store';
-    public $translatedAttributes = [];
-    protected $fillable = ['neighborhood','address', 'city', 'city_id', 'province_id', 'schedules', 'status','social', 'options', 'user_id', 'theme_id'];
+    public $translatedAttributes = ['name', 'slug', 'slogan', 'description', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
+    protected $fillable = ['neighborhood_id','address', 'city', 'city_id', 'province_id', 'schedules', 'status','social', 'options', 'user_id', 'theme_id'];
 
     protected $casts = [
         'options' => 'array',
@@ -35,10 +36,20 @@ class Store extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'marketplace__store__category')->withTimestamps();
+        return $this->belongsToMany(CategoryStore::class, 'marketplace__store_category',"store_id","category_store_id")->withTimestamps();
     }
 
-    public function locationCity()
+    public function paymentMethods()
+    {
+        return $this->belongsToMany(PaymentMethod::class, 'marketplace__store_payment_methods',"store_id","payment_method_id")->withTimestamps();
+    }
+
+    public function shippingMethods()
+    {
+        return $this->belongsToMany(ShippingMethod::class, 'marketplace__store_shipping_methods',"store_id","shipping_method_id")->withTimestamps();
+    }
+
+    public function city()
     {
         return $this->belongsTo('Modules\Ilocations\Entities\City');
     }
@@ -57,6 +68,11 @@ class Store extends Model
         return $this->hasMany(StoreHistory::class);
     }
 
+    public function favoriteStores()
+    {
+        return $this->hasMany(FavoriteStore::class);
+    }
+
     public function settings()
     {
         return $this->hasMany(Setting::class);
@@ -65,6 +81,46 @@ class Store extends Model
     public function comments()
     {
         return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function productCategories()
+    {
+        return $this->hasMany('Modules\Icommerce\Entities\Category');
+    }
+
+    public function products()
+    {
+        return $this->hasMany('Modules\Icommerce\Entities\Product');
+    }
+
+    public function coupons()
+    {
+        return $this->hasMany('Modules\Icommerce\Entities\Coupon');
+    }
+
+    public function currency()
+    {
+        return $this->hasMany('Modules\Icommerce\Entities\Currency');
+    }
+
+    public function manufacturers()
+    {
+        return $this->hasMany('Modules\Icommerce\Entities\Manufacturer');
+    }
+
+    public function taxRate()
+    {
+        return $this->hasMany('Modules\Icommerce\Entities\TaxRate');
+    }
+
+    public function paymentMethod()
+    {
+        return $this->hasMany('Modules\Icommerce\Entities\PaymentMethod');
+    }
+
+    public function shippingMethod()
+    {
+        return $this->hasMany('Modules\Icommerce\Entities\ShippingMethod');
     }
 
     public function getOptionsAttribute($value)
@@ -78,27 +134,28 @@ class Store extends Model
 
     public function getSecondaryImageAttribute()
     {
-        $thumbnail = $this->files()->where('zone', 'secondaryimage')->first();
-        if (!$thumbnail) {
-            if (isset($this->options->mainimage)) {
-                $image = [
-                    'mimeType' => 'image/jpeg',
-                    'path' => url($this->options->mainimage)
-                ];
-            } else {
-                $image = [
-                    'mimeType' => 'image/jpeg',
-                    'path' => url('modules/iblog/img/post/default.jpg')
-                ];
+        $images = \Storage::disk('publicmedia')->files('assets/marketplace/store/'.$this->id.'/slider');
+        if (count($images)) {
+            $response = array();
+            foreach ($images as $image) {
+                $response = ["mimetype" => "image/jpeg", "path" => $image];
+            }
+        } else {
+            $gallery = $this->files()->where('zone', 'slider')->get();
+            $response = [];
+            foreach ($gallery as $img) {
+                array_push($response, [
+                    'mimeType' => $img->mimetype,
+                    'path' => $img->path_string
+                ]);
             }
 
-        } else {
-            $image = [
-                'mimeType' => $thumbnail->mimetype,
-                'path' => $thumbnail->path_string
-            ];
         }
-        return json_decode(json_encode($image));
+        if(is_array($response)){
+            $response= reset($response);
+        }
+
+        return json_decode(json_encode($response));
     }
 
     public function getMainImageAttribute()
@@ -128,7 +185,6 @@ class Store extends Model
 
     public function getGalleryAttribute()
     {
-
         $images = \Storage::disk('publicmedia')->files('assets/marketplace/store/'.$this->id.'/gallery');
         if (count($images)) {
             $response = array();
@@ -149,14 +205,37 @@ class Store extends Model
 
         return json_decode(json_encode($response));
     }
+    public function getSliderAttribute()
+    {
+        $images = \Storage::disk('publicmedia')->files('assets/marketplace/store/'.$this->id.'/slider');
+        if (count($images)) {
+            $response = array();
+            foreach ($images as $image) {
+                $response = ["mimetype" => "image/jpeg", "path" => $image];
+            }
+        } else {
+          $gallery = $this->files()->where('zone', 'slider')->get();
+            $response = [];
+            foreach ($gallery as $img) {
+                array_push($response, [
+                    'mimeType' => $img->mimetype,
+                    'path' => $img->path_string
+                ]);
+            }
 
-    public function getCityAttribute(){
-        if(isset($this->city_id) && !empty($this->city_id)){
-            return $this->locationCity()->name;
-        }else{
-            return $this->city??false;
         }
+
+        return json_decode(json_encode($response));
     }
+
+    // public function getCityAttribute(){
+    //     if(isset($this->city_id) && !empty($this->city_id)){
+    //         return $this->locationCity();
+    //         // return $this->locationCity()->name;
+    //     }else{
+    //         return $this->city??false;
+    //     }
+    // }
 
     /**
      * URL post

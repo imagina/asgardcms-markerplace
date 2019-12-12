@@ -4,38 +4,32 @@ namespace Modules\Marketplace\Entities;
 
 use Dimsav\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
-use Kalnoy\Nestedset\NodeTrait;
+use Modules\Media\Support\Traits\MediaRelation;
 
 
 class CategoryStore extends Model
 {
-    use Translatable, NodeTrait;
+    use Translatable, MediaRelation;
 
     protected $table = 'marketplace__categorystores';
     public $translatedAttributes = ['title', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
-    protected $fillable = ['parent_id', 'options',];
+    protected $fillable = ['parent_id', 'options', 'icon'];
 
-
-    public function getLftName()
+    public function parent()
     {
-        return 'left';
+        return $this->belongsTo(CategoryStore::class, 'parent_id');
     }
-
-    public function getRgtName()
+    public function children()
     {
-        return 'right';
+        return $this->hasMany(CategoryStore::class, 'parent_id');
     }
-
-    public function getParentIdName()
+    public function stores()
     {
-        return 'parent';
+        return $this->belongsToMany(Store::class, 'marketplace__store_category');
     }
 
 // Specify parent id attribute mutator
-    public function setParentAttribute($value)
-    {
-        $this->setParentIdAttribute($value);
-    }
+
 
     public function getSecondaryImageAttribute()
     {
@@ -104,6 +98,19 @@ class CategoryStore extends Model
 
         #i: No relation found, return the call to parent (Eloquent) to handle it.
         return parent::__call($method, $parameters);
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| SCOPES
+|--------------------------------------------------------------------------
+*/
+    public function scopeFirstLevelItems($query)
+    {
+        return $query->where('depth', '1')
+            ->orWhere('depth', null)
+            ->orderBy('lft', 'ASC');
     }
 
 }

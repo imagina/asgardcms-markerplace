@@ -2,8 +2,12 @@
 
 namespace Modules\Marketplace\Repositories\Eloquent;
 
+use Modules\Marketplace\Events\StoreWasCreated;
+use Modules\Marketplace\Events\StoreWasUpdated;
+use Modules\Marketplace\Events\StoreWasDeleted;
 use Modules\Marketplace\Repositories\StoreRepository;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
+use Illuminate\Database\Eloquent\Builder;
 
 class EloquentStoreRepository extends EloquentBaseRepository implements StoreRepository
 {
@@ -50,12 +54,35 @@ class EloquentStoreRepository extends EloquentBaseRepository implements StoreRep
             if (isset($filter->parent)) {
                 $query->where('parent_id', $filter->parent);
             }
+            if (isset($filter->categories)) {
+                $categories = is_array($filter->categories) ? $filter->categories : [$filter->categories];
+                $query->whereHas('categories', function ($q) use ($categories) {
+                    $q->whereIn('category_store_id', $categories);
+                });
+            }
+            if (isset($filter->neighborhoods)) {
+                $neighborhoods = is_array($filter->neighborhoods) ?$filter->neighborhoods : [$filter->neighborhoods];
+                $query->whereIn('neighborhood_id', $neighborhoods);
+            }
+            if (isset($filter->cities)) {
+                $cities = is_array($filter->cities) ?$filter->cities : [$filter->cities];
+                $query->whereIn('city_id', $cities);
+            }
+            if (isset($filter->provinces)) {
+                $provinces = is_array($filter->provinces) ?$filter->provinces : [$filter->provinces];
+                $query->whereIn('province_id', $provinces);
+            }
+            if (isset($filter->user)) {
+                $user = is_array($filter->user) ?$filter->user : [$filter->user];
+                $query->whereIn('user_id', $user);
+            }
 
             if (isset($filter->search)) { //si hay que filtrar por rango de precio
                 $criterion = $filter->search;
 
                 $query->whereHas('translations', function (Builder $q) use ($criterion) {
-                    $q->where('title', 'like', "%{$criterion}%");
+                    $q->where('name', 'like', "%{$criterion}%");
+                    $q->orWhere('description', 'like',"%{$criterion}%");
                 });
             }
 
@@ -74,6 +101,9 @@ class EloquentStoreRepository extends EloquentBaseRepository implements StoreRep
                 $orderByField = $filter->order->field ?? 'created_at';//Default field
                 $orderWay = $filter->order->way ?? 'desc';//Default way
                 $query->orderBy($orderByField, $orderWay);//Add order to query
+            }
+            if (isset($filter->status)) {
+                $query->whereStatus($filter->status);
             }
         }
 

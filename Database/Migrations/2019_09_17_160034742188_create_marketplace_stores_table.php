@@ -14,11 +14,11 @@ class CreateMarketplaceStoresTable extends Migration
     {
         Schema::create('marketplace__stores', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->increments('id');
-            $table->text('neighborhood');
+            $table->integer('id');
+            $table->integer('neighborhood_id')->unsigned()->nullable();
             $table->text('address');
             $table->text('city')->nullable();
-            $table->integer('city_id')->nullable();
+            $table->integer('city_id')->unsigned()->nullable();
             $table->text('schedules')->default('')->nullable();
             $table->integer('province_id')->default(0)->unsigned();
             $table->integer('status')->default(0)->unsigned();

@@ -77,6 +77,7 @@ class CategoryApiController extends BaseApiController
             //If request pagination add meta-page
             $params->page ? $response["meta"] = ["page" => $this->pageTransformer($dataEntity)] : false;
         } catch (\Exception $e) {
+            \Log::error($e);
             $status = $this->getStatusError($e->getCode());
             $response = ["errors" => $e->getMessage()];
         }
@@ -96,9 +97,9 @@ class CategoryApiController extends BaseApiController
     {
         \DB::beginTransaction();
         try {
-            $data = $request->input('attributes') ?? [];//Get data  
+            $data = $request->input('attributes') ?? [];//Get data
             //Validate Request
-            $this->validateRequestApi(new CustomRequest($data));
+            $this->validateRequestApi(new CreateCategoryStoreRequest($data));
 
             //Create item
             $dataEntity = $this->category->create($data);
@@ -107,9 +108,10 @@ class CategoryApiController extends BaseApiController
             $response = ["data" => new CategoryTransformer($dataEntity)];
             \DB::commit(); //Commit to Data Base
         } catch (\Exception $e) {
+            \Log::error($e);
             \DB::rollback();//Rollback to Data Base
             $status = $this->getStatusError($e->getCode());
-            $response = ["errors" => $e->getMessage()];
+            $response = ["errors" => $e->getMessage(),'line'=>$e->getLine(),'trace'=>$e->getTrace()];
         }
         //Return response
         return response()->json($response ?? ["data" => "Request successful"], $status ?? 200);
@@ -131,7 +133,7 @@ class CategoryApiController extends BaseApiController
             $data = $request->input('attributes') ?? [];//Get data
 
             //Validate Request
-            $this->validateRequestApi(new CustomRequest($data));
+            $this->validateRequestApi(new UpdateCategoryStoreRequest($data));
 
             //Get Parameters from URL.
             $params = $this->getParamsRequest($request);
@@ -148,6 +150,7 @@ class CategoryApiController extends BaseApiController
             $response = ["data" => 'Item Updated'];
             \DB::commit();//Commit to DataBase
         } catch (\Exception $e) {
+            \Log::error($e);
             \DB::rollback();//Rollback to Data Base
             $status = $this->getStatusError($e->getCode());
             $response = ["errors" => $e->getMessage()];
@@ -176,13 +179,14 @@ class CategoryApiController extends BaseApiController
             $dataEntity = $this->category->getItem($criteria, $params);
             if (!$dataEntity) throw new Exception('Item not found', 204);
             //call Method delete
-            $this->category->delete($dataEntity);
+            $this->category->destroy($dataEntity);
 
 
             //Response
             $response = ["data" => "Item deleted"];
             \DB::commit();//Commit to Data Base
         } catch (\Exception $e) {
+            \Log::error($e);
             \DB::rollback();//Rollback to Data Base
             $status = $this->getStatusError($e->getCode());
             $response = ["errors" => $e->getMessage()];

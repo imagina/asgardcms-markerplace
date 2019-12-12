@@ -15,14 +15,14 @@ $router->group(['prefix' =>'/category'], function (Router $router) {
     $router->get('/', [
         'as' => 'marketplace.category.get.items.by',
         'uses' => 'CategoryApiController@index',
-        'middleware' => ['auth:api']
+        //'middleware' => ['auth:api']
     ]);
 
     //Route show
     $router->get('/{criteria}', [
         'as' => 'marketplace.category.get.item',
         'uses' => 'CategoryApiController@show',
-        'middleware' => ['auth:api']
+        //'middleware' => ['auth:api']
     ]);
 
     //Route update

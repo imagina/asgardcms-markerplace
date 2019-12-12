@@ -15,7 +15,7 @@ $router->group(['prefix' =>'/store'], function (Router $router) {
     $router->get('/', [
         'as' => 'marketplace.store.get.items.by',
         'uses' => 'StoreApiController@index',
-        'middleware' => ['auth:api']
+        //'middleware' => ['auth:api']
     ]);
 
     //Route show
