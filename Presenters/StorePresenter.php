@@ -36,56 +36,87 @@ class StorePresenter extends Presenter
      */
     public function level()
     {
-      //Get levels store
-      $params=(object)[
-        'filter' => [
-          "entityNamespace"=>Store::class
-        ],
-        'fields' => [],
-        'include' => [],
-        'take' => 30,
-      ];
-      $levels = $this->level->getItemsBy($params);
-      $levelEntity=null;
-      foreach($levels as $level){
-        $allCriteriasCount=count($level->options->criterias);
-        $critCount=0;
-        foreach($level->options->criterias as $criteria){
-          $valueRelation=$this->entity->{$criteria->relationName};
-          if($criteria->operator==">="){
-            if($valueRelation>=$criteria->value){
-              $critCount++;
-            }
-          }else if($criteria->operator=="<="){
-            if($valueRelation<=$criteria->value){
-              $critCount++;
-            }
-          }else if($criteria->operator=="=="){
-            if($valueRelation==$criteria->value){
-              $critCount++;
-            }
-          }else if($criteria->operator=="<"){
-            if($valueRelation<$criteria->value){
-              $critCount++;
-            }
-          }else if($criteria->operator==">"){
-            if($valueRelation>$criteria->value){
-              $critCount++;
-            }
-          }
-          /*
-          //Con este eval se deja de realizar todas las validaciones de arriba
-          */
-          // $ma ="return (".$valueRelation.$criteria->operator.$criteria->value.")".";";
-          // if(eval($ma)){
-          //   $critCount++;
-          // }
-        }//foreach
-        if($allCriteriasCount==$critCount)
-          $levelEntity=$level;
-      }//foreach levels
-      return $levelEntity;
+        //Get levels store
+        $params = (object)[
+            'filter' => [
+                "entityNamespace" => Store::class
+            ],
+            'fields' => [],
+            'include' => [],
+            'take' => 30,
+        ];
+        $levels = $this->level->getItemsBy($params);
+        $levelEntity = null;
+        foreach ($levels as $level) {
+            $allCriteriasCount = count($level->options->criterias);
+            $critCount = 0;
+            foreach ($level->options->criterias as $criteria) {
+                $valueRelation = $this->entity->{$criteria->relationName};
+
+                switch ($criteria->operator) {
+                    case ">=":
+                        if ($valueRelation >= $criteria->value) {
+                            $critCount++;
+                        }
+                        break;
+                    case "<=":
+                        if ($valueRelation <= $criteria->value) {
+                            $critCount++;
+                        }
+                        break;
+                    case "==":
+                        if ($valueRelation == $criteria->value) {
+                            $critCount++;
+                        }
+                        break;
+                    case "<":
+                        if ($valueRelation < $criteria->value) {
+                            $critCount++;
+                        }
+                        break;
+                    case ">":
+                        if ($valueRelation > $criteria->value) {
+                            $critCount++;
+                        }
+                        break;
+                    default:
+                        $critCount++;
+                        break;
+                }
+
+
+                /*if ($criteria->operator == ">=") {
+                    if ($valueRelation >= $criteria->value) {
+                        $critCount++;
+                    }
+                } else if ($criteria->operator == "<=") {
+
+                } else if ($criteria->operator == "==") {
+
+                } else if ($criteria->operator == "<") {
+                    if ($valueRelation < $criteria->value) {
+                        $critCount++;
+                    }
+                } else if ($criteria->operator == ">") {
+                    if ($valueRelation > $criteria->value) {
+                        $critCount++;
+                    }
+                }*/
+                /*
+                //Con este eval se deja de realizar todas las validaciones de arriba
+                */
+                // $ma ="return (".$valueRelation.$criteria->operator.$criteria->value.")".";";
+                // if(eval($ma)){
+                //   $critCount++;
+                // }
+            }//foreach
+
+            if ($allCriteriasCount == $critCount)
+                $levelEntity = $level;
+        }//foreach levels
+        return $levelEntity;
     }
+
     /**
      * Get the previous store of the current store
      * @return object
@@ -147,10 +178,10 @@ class StorePresenter extends Presenter
         }
     }
 
-    public function mainImage($store,$thumbnail=null)
+    public function mainImage($store, $thumbnail = null)
     {
-        $item=$store->mainimage2;
-        $path=$thumbnail?:$store->path;
+        $item = $store->mainimage2;
+        $path = $thumbnail ?: $store->path;
         switch ($item->mimetype) {
             case 'image/jpg':
             case 'image/png':

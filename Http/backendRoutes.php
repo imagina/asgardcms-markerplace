@@ -334,7 +334,75 @@ $router->group(['prefix' =>'/marketplace'], function (Router $router) {
         'uses' => 'LevelTypeController@destroy',
         'middleware' => 'can:marketplace.leveltypes.destroy'
     ]);
+    $router->bind('benefits', function ($id) {
+        return app('Modules\Marketplace\Repositories\BenefitsRepository')->find($id);
+    });
+    $router->get('benefits', [
+        'as' => 'admin.marketplace.benefits.index',
+        'uses' => 'BenefitsController@index',
+        'middleware' => 'can:marketplace.benefits.index'
+    ]);
+    $router->get('benefits/create', [
+        'as' => 'admin.marketplace.benefits.create',
+        'uses' => 'BenefitsController@create',
+        'middleware' => 'can:marketplace.benefits.create'
+    ]);
+    $router->post('benefits', [
+        'as' => 'admin.marketplace.benefits.store',
+        'uses' => 'BenefitsController@store',
+        'middleware' => 'can:marketplace.benefits.create'
+    ]);
+    $router->get('benefits/{benefits}/edit', [
+        'as' => 'admin.marketplace.benefits.edit',
+        'uses' => 'BenefitsController@edit',
+        'middleware' => 'can:marketplace.benefits.edit'
+    ]);
+    $router->put('benefits/{benefits}', [
+        'as' => 'admin.marketplace.benefits.update',
+        'uses' => 'BenefitsController@update',
+        'middleware' => 'can:marketplace.benefits.edit'
+    ]);
+    $router->delete('benefits/{benefits}', [
+        'as' => 'admin.marketplace.benefits.destroy',
+        'uses' => 'BenefitsController@destroy',
+        'middleware' => 'can:marketplace.benefits.destroy'
+    ]);
+    $router->bind('storecontact', function ($id) {
+        return app('Modules\Marketplace\Repositories\StoreContactRepository')->find($id);
+    });
+    $router->get('storecontacts', [
+        'as' => 'admin.marketplace.storecontact.index',
+        'uses' => 'StoreContactController@index',
+        'middleware' => 'can:marketplace.storecontacts.index'
+    ]);
+    $router->get('storecontacts/create', [
+        'as' => 'admin.marketplace.storecontact.create',
+        'uses' => 'StoreContactController@create',
+        'middleware' => 'can:marketplace.storecontacts.create'
+    ]);
+    $router->post('storecontacts', [
+        'as' => 'admin.marketplace.storecontact.store',
+        'uses' => 'StoreContactController@store',
+        'middleware' => 'can:marketplace.storecontacts.create'
+    ]);
+    $router->get('storecontacts/{storecontact}/edit', [
+        'as' => 'admin.marketplace.storecontact.edit',
+        'uses' => 'StoreContactController@edit',
+        'middleware' => 'can:marketplace.storecontacts.edit'
+    ]);
+    $router->put('storecontacts/{storecontact}', [
+        'as' => 'admin.marketplace.storecontact.update',
+        'uses' => 'StoreContactController@update',
+        'middleware' => 'can:marketplace.storecontacts.edit'
+    ]);
+    $router->delete('storecontacts/{storecontact}', [
+        'as' => 'admin.marketplace.storecontact.destroy',
+        'uses' => 'StoreContactController@destroy',
+        'middleware' => 'can:marketplace.storecontacts.destroy'
+    ]);
 // append
+
+
 
 
 

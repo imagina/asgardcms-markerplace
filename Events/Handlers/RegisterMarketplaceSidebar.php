@@ -133,7 +133,27 @@ class RegisterMarketplaceSidebar implements \Maatwebsite\Sidebar\SidebarExtender
                         $this->auth->hasAccess('marketplace.leveltypes.index')
                     );
                 });
+                $item->item(trans('marketplace::benefits.title.benefits'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.marketplace.benefits.create');
+                    $item->route('admin.marketplace.benefits.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('marketplace.benefits.index')
+                    );
+                });
+                $item->item(trans('marketplace::storecontacts.title.storecontacts'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.marketplace.storecontact.create');
+                    $item->route('admin.marketplace.storecontact.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('marketplace.storecontacts.index')
+                    );
+                });
 // append
+
+
 
 
 

@@ -42,7 +42,11 @@ class MarketplaceServiceProvider extends ServiceProvider
             $event->load('levels', array_dot(trans('marketplace::levels')));
             $event->load('levelcriterias', array_dot(trans('marketplace::levelcriterias')));
             $event->load('leveltypes', array_dot(trans('marketplace::leveltypes')));
+            $event->load('benefits', array_dot(trans('marketplace::benefits')));
+            $event->load('storecontacts', array_dot(trans('marketplace::storecontacts')));
             // append translations
+
+
 
 
 
@@ -190,7 +194,33 @@ class MarketplaceServiceProvider extends ServiceProvider
                 return new \Modules\Marketplace\Repositories\Cache\CacheLevelTypeDecorator($repository);
             }
         );
+        $this->app->bind(
+            'Modules\Marketplace\Repositories\BenefitsRepository',
+            function () {
+                $repository = new \Modules\Marketplace\Repositories\Eloquent\EloquentBenefitsRepository(new \Modules\Marketplace\Entities\Benefits());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Marketplace\Repositories\Cache\CacheBenefitsDecorator($repository);
+            }
+        );
+        $this->app->bind(
+            'Modules\Marketplace\Repositories\StoreContactRepository',
+            function () {
+                $repository = new \Modules\Marketplace\Repositories\Eloquent\EloquentStoreContactRepository(new \Modules\Marketplace\Entities\StoreContact());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Marketplace\Repositories\Cache\CacheStoreContactDecorator($repository);
+            }
+        );
 // add bindings
+
+
 
 
 

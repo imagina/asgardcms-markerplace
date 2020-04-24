@@ -16,4 +16,6 @@ $router->group(['prefix' => 'marketplace/v1'], function (Router $router) {
     require('ApiRoutes/levelCriteriaRoutes.php');
     require('ApiRoutes/levelTypeRoutes.php');
     require('ApiRoutes/emailRoutes.php');
+    require('ApiRoutes/benefitRoutes.php');
+    require('ApiRoutes/storeContactRoutes.php');
 });

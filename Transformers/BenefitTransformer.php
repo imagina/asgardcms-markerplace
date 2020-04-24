@@ -5,21 +5,15 @@ namespace Modules\Marketplace\Transformers;
 use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Support\Arr;
 
-class LevelTransformer extends Resource
+class BenefitTransformer extends Resource
 {
     public function toArray($request)
     {
         $data = [
             'id' => $this->when($this->id, $this->id),
             'name' => $this->when($this->name, $this->name),
-            'description' => $this->when($this->description, $this->description),
-            'levelTypeId' => $this->when($this->level_type_id, $this->level_type_id),
-            'order'=> $this->order??0,
-            'benefitsQuantity'=> $this->benefits_quantity??0,
-            'options' => $this->when($this->options, $this->options),
-            'levelType' => new LevelTypeTransformer($this->levelType),
-            'benefits' => BenefitTransformer::collection($this->whenLoaded('benefits')),
-
+            'systemName' => $this->when($this->system_name, $this->system_name),
+            'description' => $this->when($this->description, $this->description)
         ];
 
         $filter = json_decode($request->filter);

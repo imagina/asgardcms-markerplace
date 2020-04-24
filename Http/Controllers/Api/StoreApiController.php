@@ -23,13 +23,12 @@ class StoreApiController extends BaseApiController
     private $setting;
     private $history;
 
-
     public function __construct(StoreRepository $store, History $history,Setting $setting)
     {
         parent::__construct();
 
-        $this->store = $store;
         $this->setting = $setting;
+        $this->store = $store;
         $this->history=$history;
     }
 
@@ -206,6 +205,7 @@ class StoreApiController extends BaseApiController
             $dataEntity->ratings()->save($rating);
             $dataEntity->update(['sum_rating'=>$oldRating+$data['rating']]);
 
+
             $checkbox = $this->setting->get('iredeems::points-per-rating-product-checkbox');
             if($checkbox){
               $points=$this->setting->get('iredeems::points-per-rating-store');
@@ -220,7 +220,6 @@ class StoreApiController extends BaseApiController
               ]);
 
             }//Checkbox
-
 
             //Response
             $response = ["data" => 'Rating successful'];

@@ -177,7 +177,21 @@ return [
         'edit' => 'marketplace::leveltypes.edit resource',
         'destroy' => 'marketplace::leveltypes.destroy resource',
     ],
+    'marketplace.benefits' => [
+        'index' => 'marketplace::benefits.list resource',
+        'create' => 'marketplace::benefits.create resource',
+        'edit' => 'marketplace::benefits.edit resource',
+        'destroy' => 'marketplace::benefits.destroy resource',
+    ],
+    'marketplace.storecontacts' => [
+        'index' => 'marketplace::storecontacts.list resource',
+        'create' => 'marketplace::storecontacts.create resource',
+        'edit' => 'marketplace::storecontacts.edit resource',
+        'destroy' => 'marketplace::storecontacts.destroy resource',
+    ],
 // append
+
+
 
 
 

@@ -2,10 +2,10 @@
 
 namespace Modules\Marketplace\Repositories\Eloquent;
 
-use Modules\Marketplace\Repositories\LevelRepository;
+use Modules\Marketplace\Repositories\BenefitsRepository;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
 
-class EloquentLevelRepository extends EloquentBaseRepository implements LevelRepository
+class EloquentBenefitsRepository extends EloquentBaseRepository implements BenefitsRepository
 {
 
   /**
@@ -59,10 +59,8 @@ class EloquentLevelRepository extends EloquentBaseRepository implements LevelRep
               }
 
           }
-          if(isset($filter->entityNamespace)){
-              $query->whereHas('levelType',function (Builder $q) use ($filter){
-                $q->where('entity_namespace',$filter->entityNamespace);
-              });
+          if(isset($filter->systemName)){
+            $query->where('system_name',$filter->systemName);
           }
 
       }
@@ -128,36 +126,5 @@ class EloquentLevelRepository extends EloquentBaseRepository implements LevelRep
       /*== REQUEST ==*/
       return $query->first();
   }
-
-  public function create($data)
-  {
-
-    $entity = $this->model->create($data);
-
-    if(isset($data['benefits']))
-    $entity->benefits()->sync(array_get($data, 'benefits', []));
-
-    return $this->find($entity->id);
-  }
-  
-      /**
-     * Update a resource
-     * @param $store
-     * @param  array $data
-     * @return mixed
-     */
-    public function update($model, $data)
-    {
-
-
-        $model->update($data);
-
-
-        if(isset($data['benefits']))
-            $model->benefits()->sync(array_get($data, 'benefits', []));
-
-
-        return $model;
-    }
 
 }

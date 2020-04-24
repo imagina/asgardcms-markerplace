@@ -5,20 +5,20 @@ namespace Modules\Marketplace\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Ihelpers\Http\Controllers\Api\BaseApiController;
-use Modules\Marketplace\Http\Requests\CreateLevelRequest;
-use Modules\Marketplace\Http\Requests\UpdateLevelRequest;
-use Modules\Marketplace\Repositories\LevelRepository;
-use Modules\Marketplace\Transformers\LevelTransformer;
+use Modules\Marketplace\Http\Requests\CreateBenefitsRequest;
+use Modules\Marketplace\Http\Requests\UpdateBenefitsRequest;
+use Modules\Marketplace\Repositories\BenefitsRepository;
+use Modules\Marketplace\Transformers\BenefitTransformer;
 
 
-class LevelApiController extends BaseApiController
+class BenefitApiController extends BaseApiController
 {
     /**
      * @var LevelRepository
      */
     private $entity;
 
-    public function __construct(LevelRepository $entity)
+    public function __construct(BenefitsRepository $entity)
     {
         parent::__construct();
 
@@ -40,7 +40,7 @@ class LevelApiController extends BaseApiController
             $dataEntity = $this->entity->getItemsBy($params);
 
             //Response
-            $response = ["data" => LevelTransformer::collection($dataEntity)];
+            $response = ["data" => BenefitTransformer::collection($dataEntity)];
 
             //If request pagination add meta-page
             $params->page ? $response["meta"] = ["page" => $this->pageTransformer($dataEntity)] : false;
@@ -70,10 +70,10 @@ class LevelApiController extends BaseApiController
             $dataEntity = $this->entity->getItem($criteria, $params);
 
             //Break if no found item
-            if (!$dataEntity) throw new \Exception('Item not found', 404);
+            if (!$dataEntity) throw new \Exception('Item not found', 204);
 
             //Response
-            $response = ["data" => new LevelTransformer($dataEntity)];
+            $response = ["data" => new BenefitTransformer($dataEntity)];
 
             //If request pagination add meta-page
             $params->page ? $response["meta"] = ["page" => $this->pageTransformer($dataEntity)] : false;
@@ -99,13 +99,13 @@ class LevelApiController extends BaseApiController
         try {
             $data = $request->input('attributes') ?? [];//Get data
             //Validate Request
-            $this->validateRequestApi(new CreateLevelRequest($data));
+            $this->validateRequestApi(new CreateBenefitsRequest($data));
 
             //Create item
             $dataEntity = $this->entity->create($data);
 
             //Response
-            $response = ["data" => new LevelTransformer($dataEntity)];
+            $response = ["data" => new BenefitTransformer($dataEntity)];
             \DB::commit(); //Commit to Data Base
         } catch (\Exception $e) {
             \DB::rollback();//Rollback to Data Base
@@ -132,7 +132,7 @@ class LevelApiController extends BaseApiController
             $data = $request->input('attributes') ?? [];//Get data
 
             //Validate Request
-            $this->validateRequestApi(new UpdateLevelRequest($data));
+            $this->validateRequestApi(new UpdateBenefitsRequest($data));
 
             //Get Parameters from URL.
             $params = $this->getParamsRequest($request);
@@ -140,7 +140,7 @@ class LevelApiController extends BaseApiController
             //Request to Repository
             $dataEntity = $this->entity->getItem($criteria, $params);
 
-            if (!$dataEntity) throw new Exception('Item not found', 404);
+            if (!$dataEntity) throw new Exception('Item not found', 204);
 
             //Request to Repository
             $this->entity->update($dataEntity, $data);
@@ -175,7 +175,7 @@ class LevelApiController extends BaseApiController
 
             //Request to Repository
             $dataEntity = $this->entity->getItem($criteria, $params);
-            if (!$dataEntity) throw new Exception('Item not found', 404);
+            if (!$dataEntity) throw new Exception('Item not found', 204);
             //call Method delete
             $this->entity->destroy($dataEntity);
 

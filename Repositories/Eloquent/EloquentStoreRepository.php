@@ -22,10 +22,10 @@ class EloquentStoreRepository extends EloquentBaseRepository implements StoreRep
         if (method_exists($this->model, 'translations')) {
             return $this->model->whereHas('translations', function (Builder $q) use ($slug) {
                 $q->where('slug', $slug);
-            })->with('translations', 'parent', 'children', 'posts')->firstOrFail();
+            })->with('translations')->firstOrFail();
         }
 
-        return $this->model->where('slug', $slug)->with('translations', 'parent', 'children', 'posts')->first();;
+        return $this->model->where('slug', $slug)->with('translations')->first();;
     }
 
     /**
@@ -82,11 +82,21 @@ class EloquentStoreRepository extends EloquentBaseRepository implements StoreRep
             }
             if (isset($filter->search)) { //si hay que filtrar por rango de precio
                 $criterion = $filter->search;
+                $param = explode(' ', $criterion);
+                $param=array_filter($param, "strlen");
+                $query->whereHas('translations', function (Builder $q) use ($param,$criterion) {
+                    foreach ($param as $index => $word) {
+                        $q->where('name', 'like', "%" . $criterion . "%")->orWhere('description', 'like', "%" . $criterion . "%");
+                        if ($index == 0) {
+                            $q->where('name', 'like', "%" . $word . "%")->orWhere('description', 'like', "%" . $word . "%");
+                        } else {
+                            $q->orWhere('name', 'like', "%" . $word . "%")->orWhere('description', 'like', "%" . $word . "%");
 
-                $query->whereHas('translations', function (Builder $q) use ($criterion) {
-                    $q->where('name', 'like', "%{$criterion}%");
-                    $q->orWhere('description', 'like',"%{$criterion}%");
+                        }
+                    }
                 });
+
+              ;
             }
             //Filter by date
             if (isset($filter->date)) {

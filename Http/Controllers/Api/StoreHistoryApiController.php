@@ -97,8 +97,7 @@ class StoreHistoryApiController extends BaseApiController
     {
         \DB::beginTransaction();
         try {
-            
-            dd($request);
+
             $data = $request->input('attributes') ?? [];//Get data  
             //Validate Request
             $this->validateRequestApi(new CreateStoreHistoryRequest($data));

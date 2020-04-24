@@ -40,10 +40,16 @@ class Store extends Model
     }
 
     public function getCountCompletedOrdersAttribute(){
-      return $this->hasMany('Modules\Icommerce\Entities\Order')->where('status_id',4)->count();
+     $count= $this->hasMany('Modules\Icommerce\Entities\Order')->where('status_id',4)->count();
+
+     return $count??0;
 
     }
 
+    public function getCountFavoriteStoresAttribute(){
+        return $this->hasMany(FavoriteStore::class)->count();
+
+    }
     public function orders(){
       return $this->hasMany('Modules\Icommerce\Entities\Order');
     }

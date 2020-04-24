@@ -14,6 +14,7 @@ class Level extends Model
   protected $fillable = [
     'order',
     'level_type_id',
+    'benefits_quantity',
     'options',
   ];
 
@@ -24,6 +25,11 @@ class Level extends Model
   public function levelType()
   {
       return $this->belongsTo('Modules\Marketplace\Entities\LevelType', 'level_type_id');
+  }
+
+  public function benefits()
+  {
+      return $this->belongsToMany(Benefits::class, 'marketplace__level_benefits',"level_id","benefit_id")->withTimestamps();
   }
 
   public function getOptionsAttribute($value)
