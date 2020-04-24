@@ -76,7 +76,10 @@ class EloquentStoreRepository extends EloquentBaseRepository implements StoreRep
                 $user = is_array($filter->user) ?$filter->user : [$filter->user];
                 $query->whereIn('user_id', $user);
             }
-
+             //add filter by himself to QCRUD - DON'T DELETE
+            if (isset($filter->storeId)){
+                $query->where('id', $filter->storeId);
+            }
             if (isset($filter->search)) { //si hay que filtrar por rango de precio
                 $criterion = $filter->search;
 
@@ -85,7 +88,6 @@ class EloquentStoreRepository extends EloquentBaseRepository implements StoreRep
                     $q->orWhere('description', 'like',"%{$criterion}%");
                 });
             }
-
             //Filter by date
             if (isset($filter->date)) {
                 $date = $filter->date;//Short filter date
@@ -95,16 +97,33 @@ class EloquentStoreRepository extends EloquentBaseRepository implements StoreRep
                 if (isset($date->to))//to a date
                     $query->whereDate($date->field, '<=', $date->to);
             }
-
             //Order by
             if (isset($filter->order)) {
-                $orderByField = $filter->order->field ?? 'created_at';//Default field
-                $orderWay = $filter->order->way ?? 'desc';//Default way
-                $query->orderBy($orderByField, $orderWay);//Add order to query
+                if($filter->order==='random'){
+                    $query->inRandomOrder();
+                }else{
+                    $orderByField = $filter->order->field ?? 'created_at';//Default field
+                    $orderWay = $filter->order->way ?? 'desc';//Default way
+                    $query->orderBy($orderByField, $orderWay);//Add order to query
+                }
+
             }
             if (isset($filter->status)) {
                 $query->whereStatus($filter->status);
             }
+            if(isset($filter->rating)){
+                $rating=$filter->rating;
+                if($rating==='top'){
+                    $query->orderBy('sum_rating','desc');
+                }
+                if($rating==='worst'){
+                    $query->orderBy('sum_rating','asc');
+                }
+            }
+            if(isset($filter->type)){
+                $query->where('type',$filter->type);
+            }
+
         }
 
         /*== FIELDS ==*/
@@ -174,29 +193,49 @@ class EloquentStoreRepository extends EloquentBaseRepository implements StoreRep
      * @param $data
      * @return mixed
      */
-    public function create($data)
-    {
+     public function create($data)
+     {
 
-        $category = $this->model->create($data);
+       $category = $this->model->create($data);
 
-        event(new StoreWasCreated($category, $data));
+       event(new StoreWasCreated($category, $data));
 
-        return $this->find($category->id);
-    }
+       if(isset($data['payment_methods']))
+       $category->paymentMethods()->sync(array_get($data, 'payment_methods', []));
+
+       if(isset($data['shipping_methods']))
+       $category->shippingMethods()->sync(array_get($data, 'shipping_methods', []));
+
+       if(isset($data['categories']))
+       $category->categories()->sync(array_get($data, 'categories', []));
+
+       return $this->find($category->id);
+     }
 
     /**
      * Update a resource
-     * @param $category
+     * @param $store
      * @param  array $data
      * @return mixed
      */
-    public function update($category, $data)
+    public function update($store, $data)
     {
-        $category->update($data);
 
-        event(new StoreWasUpdated($category, $data));
 
-        return $category;
+        $store->update($data);
+
+        event(new StoreWasUpdated($store, $data));
+
+        if(isset($data['payment_methods']))
+            $store->paymentMethods()->sync(array_get($data, 'payment_methods', []));
+
+        if(isset($data['shipping_methods']))
+            $store->shippingMethods()->sync(array_get($data, 'shipping_methods', []));
+
+        if(isset($data['categories']))
+            $store->categories()->sync(array_get($data, 'categories', []));
+
+        return $store;
     }
 
 
@@ -207,34 +246,5 @@ class EloquentStoreRepository extends EloquentBaseRepository implements StoreRep
         return $model->delete();
     }
 
-    /**
-     * Update the notifications for the given ids
-     * @param array $criterias
-     * @param array $data
-     * @return bool
-     */
-    public function updateItems($criterias, $data)
-    {
-        $query = $this->model->query();
-        $query->whereIn('id', $criterias)->update($data);
-        return $query;
-
-
-    }
-
-    /**
-     * Delete the notifications for the given ids
-     * @param array $criterias
-     * @return bool
-     */
-    public function deleteItems($criterias)
-    {
-        $query = $this->model->query();
-
-        $query->whereIn('id', $criterias)->delete();
-
-        return $query;
-
-    }
 
 }

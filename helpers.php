@@ -10,7 +10,7 @@ if (!function_exists('googleMaps')) {
             }
 
         }
-        return null;
+        return $url;
 
     }
 }

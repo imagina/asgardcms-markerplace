@@ -38,7 +38,7 @@ final class StoreHistory implements History
         $change=json_encode($request->input('attributes'));
         $data=['ip'=>$ip,'change'=>$change,'user_id' => $user,'store_id'=>$store];
         $history=$this->storeHistory->create($data);
-        dd($history);
+        // dd($history);
 
 
     }

@@ -38,10 +38,11 @@ class MarketplaceServiceProvider extends ServiceProvider
             $event->load('themes', array_dot(trans('marketplace::themes')));
             $event->load('comments', array_dot(trans('marketplace::comments')));
             $event->load('categorystores', array_dot(trans('marketplace::categorystores')));
+            $event->load('favoritestores', array_dot(trans('marketplace::favoritestores')));
+            $event->load('levels', array_dot(trans('marketplace::levels')));
+            $event->load('levelcriterias', array_dot(trans('marketplace::levelcriterias')));
+            $event->load('leveltypes', array_dot(trans('marketplace::leveltypes')));
             // append translations
-
-
-
 
 
 
@@ -139,6 +140,60 @@ class MarketplaceServiceProvider extends ServiceProvider
                 return new \Modules\Marketplace\Repositories\Cache\CacheCategoryStoreDecorator($repository);
             }
         );
+
+        $this->app->bind(
+            'Modules\Marketplace\Repositories\FavoriteStoreRepository',
+            function () {
+                $repository = new \Modules\Marketplace\Repositories\Eloquent\EloquentFavoriteStoreRepository(new \Modules\Marketplace\Entities\FavoriteStore());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Marketplace\Repositories\Cache\CacheFavoriteStoreDecorator($repository);
+            }
+        );
+
+                $this->app->bind(
+            'Modules\Marketplace\Repositories\LevelRepository',
+            function () {
+                $repository = new \Modules\Marketplace\Repositories\Eloquent\EloquentLevelRepository(new \Modules\Marketplace\Entities\Level());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Marketplace\Repositories\Cache\CacheLevelDecorator($repository);
+            }
+        );
+        $this->app->bind(
+            'Modules\Marketplace\Repositories\LevelCriteriaRepository',
+            function () {
+                $repository = new \Modules\Marketplace\Repositories\Eloquent\EloquentLevelCriteriaRepository(new \Modules\Marketplace\Entities\LevelCriteria());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Marketplace\Repositories\Cache\CacheLevelCriteriaDecorator($repository);
+            }
+        );
+        $this->app->bind(
+            'Modules\Marketplace\Repositories\LevelTypeRepository',
+            function () {
+                $repository = new \Modules\Marketplace\Repositories\Eloquent\EloquentLevelTypeRepository(new \Modules\Marketplace\Entities\LevelType());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Marketplace\Repositories\Cache\CacheLevelTypeDecorator($repository);
+            }
+        );
+// add bindings
+
+
+
 
         $this->app->bind(\Modules\Marketplace\Services\History::class, function ($app) {
             return new StoreHistory($app[StoreHistoryRepository::class], $app[Authentication::class]);

@@ -102,6 +102,7 @@ class CommentApiController extends BaseApiController
             $this->validateRequestApi(new CreateCommentRequest($data));
 
             //Create item
+            $model = $data->commentable_type::findOrFail($data->commentable_id);
             $dataEntity = $this->comment->create($data);
 
             //Response

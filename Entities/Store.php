@@ -5,6 +5,7 @@ namespace Modules\Marketplace\Entities;
 use Dimsav\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
+use Modules\Iquiz\Entities\Poll;
 use Modules\Marketplace\Presenters\StorePresenter;
 use Modules\Media\Entities\File;
 use Modules\Media\Support\Traits\MediaRelation;
@@ -18,8 +19,12 @@ class Store extends Model
 
     protected $table = 'marketplace__stores';
     protected static $entityNamespace = 'asgardcms/store';
-    public $translatedAttributes = ['name', 'slug', 'slogan', 'description', 'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
-    protected $fillable = ['neighborhood_id','address', 'city', 'city_id', 'province_id', 'schedules', 'status','social', 'options', 'user_id', 'theme_id'];
+    public $translatedAttributes = ['name', 'slug', 'slogan', 'description',
+     'meta_title', 'meta_description', 'meta_keywords', 'translatable_options'];
+    protected $fillable = [
+      'neighborhood_id','address', 'city', 'city_id', 'province_id', 'schedules',
+      'status','social', 'options', 'user_id', 'theme_id','sum_rating','type'
+     ];
 
     protected $casts = [
         'options' => 'array',
@@ -34,6 +39,21 @@ class Store extends Model
         return $this->belongsTo("Modules\\User\\Entities\\{$driver}\\User");
     }
 
+    public function getCountCompletedOrdersAttribute(){
+      return $this->hasMany('Modules\Icommerce\Entities\Order')->where('status_id',4)->count();
+
+    }
+
+    public function orders(){
+      return $this->hasMany('Modules\Icommerce\Entities\Order');
+    }
+
+    public function polls(){
+      return $this->hasMany('Modules\Iquiz\Entities\Poll');
+    }
+    public function bannersAds(){
+        return $this->hasMany('Modules\Ibanners\Entities\Position');
+    }
     public function categories()
     {
         return $this->belongsToMany(CategoryStore::class, 'marketplace__store_category',"store_id","category_store_id")->withTimestamps();
@@ -72,7 +92,6 @@ class Store extends Model
     {
         return $this->hasMany(FavoriteStore::class);
     }
-
     public function settings()
     {
         return $this->hasMany(Setting::class);

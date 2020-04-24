@@ -2,7 +2,7 @@
 
 namespace Modules\Marketplace\Events;
 
-use Modules\Marketplace\Entities\Category;
+use Modules\Marketplace\Entities\CategoryStore as Category;
 use Modules\Media\Contracts\StoringMedia;
 
 class CategoryWasUpdated implements StoringMedia

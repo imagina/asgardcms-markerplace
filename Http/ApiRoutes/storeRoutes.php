@@ -31,6 +31,12 @@ $router->group(['prefix' =>'/store'], function (Router $router) {
         'uses' => 'StoreApiController@update',
         'middleware' => ['auth:api']
     ]);
+    //Rating
+    $router->post('/rating/{criteria}', [
+        'as' => 'marketplace.store.rating',
+        'uses' => 'StoreApiController@rating',
+        'middleware' => ['auth:api']
+    ]);
 
     //Route delete
     $router->delete('/{criteria}', [

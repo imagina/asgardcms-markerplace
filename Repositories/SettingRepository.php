@@ -22,18 +22,5 @@ interface SettingRepository extends BaseRepository
     public function getItem($criteria, $params);
 
 
-    /**
-     * Update the notifications for the given ids
-     * @param array $criterias
-     * @param array $data
-     * @return bool
-     */
-    public function updateItems($criterias, $data);
 
-    /**
-     * Delete the notifications for the given ids
-     * @param array $criterias
-     * @return bool
-     */
-    public function deleteItems($criterias);
 }

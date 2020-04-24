@@ -4,7 +4,9 @@ namespace Modules\Marketplace\Repositories\Eloquent;
 
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
 use Modules\Marketplace\Repositories\CategoryStoreRepository;
-
+use Modules\Marketplace\Events\CategoryWasCreated;
+use Modules\Marketplace\Events\CategoryWasDeleted;
+use Modules\Marketplace\Events\CategoryWasUpdated;
 class EloquentCategoryStoreRepository extends EloquentBaseRepository implements CategoryStoreRepository
 {
 
@@ -147,7 +149,7 @@ class EloquentCategoryStoreRepository extends EloquentBaseRepository implements 
      */
     public function create($data)
     {
-
+      
         $category = $this->model->create($data);
 
         event(new CategoryWasCreated($category, $data));
@@ -178,34 +180,5 @@ class EloquentCategoryStoreRepository extends EloquentBaseRepository implements 
         return $model->delete();
     }
 
-    /**
-     * Update the notifications for the given ids
-     * @param array $criterias
-     * @param array $data
-     * @return bool
-     */
-    public function updateItems($criterias, $data)
-    {
-        $query = $this->model->query();
-        $query->whereIn('id', $criterias)->update($data);
-        return $query;
-
-
-    }
-
-    /**
-     * Delete the notifications for the given ids
-     * @param array $criterias
-     * @return bool
-     */
-    public function deleteItems($criterias)
-    {
-        $query = $this->model->query();
-
-        $query->whereIn('id', $criterias)->delete();
-
-        return $query;
-
-    }
 
 }

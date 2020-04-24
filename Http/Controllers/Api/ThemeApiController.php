@@ -45,6 +45,7 @@ class ThemeApiController extends BaseApiController
             //If request pagination add meta-page
             $params->page ? $response["meta"] = ["page" => $this->pageTransformer($dataEntity)] : false;
         } catch (\Exception $e) {
+            \Log::error($e);
             $status = $this->getStatusError($e->getCode());
             $response = ["errors" => $e->getMessage()];
         }
@@ -97,7 +98,7 @@ class ThemeApiController extends BaseApiController
     {
         \DB::beginTransaction();
         try {
-            $data = $request->input('attributes') ?? [];//Get data  
+            $data = $request->input('attributes') ?? [];//Get data
             //Validate Request
             $this->validateRequestApi(new CreateThemesRequest($data));
 
@@ -177,7 +178,7 @@ class ThemeApiController extends BaseApiController
             $dataEntity = $this->theme->getItem($criteria, $params);
             if (!$dataEntity) throw new Exception('Item not found', 204);
             //call Method delete
-            $this->theme->delete($dataEntity);
+            $this->theme->destroy($dataEntity);
 
 
             //Response

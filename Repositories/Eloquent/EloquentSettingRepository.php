@@ -130,34 +130,4 @@ class EloquentSettingRepository extends EloquentBaseRepository implements Settin
         return $query->first();
     }
 
-
-    /**
-     * Update the notifications for the given ids
-     * @param array $criterias
-     * @param array $data
-     * @return bool
-     */
-    public function updateItems($criterias, $data)
-    {
-        $query = $this->model->query();
-        $query->whereIn('id', $criterias)->update($data);
-        return $query;
-
-
-    }
-
-    /**
-     * Delete the notifications for the given ids
-     * @param array $criterias
-     * @return bool
-     */
-    public function deleteItems($criterias)
-    {
-        $query = $this->model->query();
-
-        $query->whereIn('id', $criterias)->delete();
-
-        return $query;
-
-    }
 }

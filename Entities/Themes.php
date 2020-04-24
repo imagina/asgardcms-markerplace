@@ -4,10 +4,11 @@ namespace Modules\Marketplace\Entities;
 
 use Dimsav\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Media\Support\Traits\MediaRelation;
 
 class Themes extends Model
 {
-    use Translatable;
+    use Translatable,MediaRelation;
 
     protected $table = 'marketplace__themes';
     public $translatedAttributes = ['name', 'description'];

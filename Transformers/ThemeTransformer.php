@@ -13,8 +13,13 @@ class ThemeTransformer extends Resource
             'id' => $this->when($this->id, $this->id),
             'name' => $this->when($this->name, $this->name),
             'description' => $this->when($this->value, $this->value),
-            'type'=>$this->when($this->type, $this->present()->type),
+            'type'=> $this->type,
+            // 'type'=>$this->when($this->type, $this->present()->type),
             'mainImage' => $this->when($this->mainImage, $this->mainImage),
+            // 'mainImage' => [
+            //   "path"=>'/statics/img/product.jpg',
+            //   "mimeType"=>'jpg'
+            // ],
         ];
         $filter = json_decode($request->filter);
 
@@ -25,7 +30,7 @@ class ThemeTransformer extends Resource
 
             foreach ($languages as $lang => $value) {
                 $data[$lang]['name'] = $this->hasTranslation($lang) ?
-                    $this->translate("$lang")['title'] : '';
+                    $this->translate("$lang")['name'] : '';
                 $data[$lang]['description'] = $this->hasTranslation($lang) ?
                     $this->translate("$lang")['description'] ?? '' : '';
             }

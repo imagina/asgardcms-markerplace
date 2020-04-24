@@ -97,7 +97,47 @@ class RegisterMarketplaceSidebar implements \Maatwebsite\Sidebar\SidebarExtender
                         $this->auth->hasAccess('marketplace.categorystores.index')
                     );
                 });
+                $item->item(trans('marketplace::favoritestores.title.favoritestores'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.marketplace.favoritestore.create');
+                    $item->route('admin.marketplace.favoritestore.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('marketplace.favoritestores.index')
+                    );
+                });
+                $item->item(trans('marketplace::levels.title.levels'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.marketplace.level.create');
+                    $item->route('admin.marketplace.level.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('marketplace.levels.index')
+                    );
+                });
+                $item->item(trans('marketplace::levelcriterias.title.levelcriterias'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.marketplace.levelcriteria.create');
+                    $item->route('admin.marketplace.levelcriteria.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('marketplace.levelcriterias.index')
+                    );
+                });
+                $item->item(trans('marketplace::leveltypes.title.leveltypes'), function (Item $item) {
+                    $item->icon('fa fa-copy');
+                    $item->weight(0);
+                    $item->append('admin.marketplace.leveltype.create');
+                    $item->route('admin.marketplace.leveltype.index');
+                    $item->authorize(
+                        $this->auth->hasAccess('marketplace.leveltypes.index')
+                    );
+                });
 // append
+
+
+
+
 
 
 

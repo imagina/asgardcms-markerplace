@@ -51,28 +51,4 @@ class CacheCategoryStoreDecorator extends BaseCacheDecorator implements Category
             );
     }
 
-    /**
-     * Update the notifications for the given ids
-     * @param array $criterias
-     * @param array $data
-     * @return bool
-     */
-    public function updateItems($criterias, $data)
-    {
-        $this->cache->tags($this->entityName)->flush();
-
-        return $this->repository->updateItems($criterias, $data);
-    }
-
-    /**
-     * Delete the notifications for the given ids
-     * @param array $criterias
-     * @return bool
-     */
-    public function deleteItems($criterias)
-    {
-        $this->cache->tags($this->entityName)->flush();
-
-        return $this->repository->deleteItems($criterias);
-    }
 }

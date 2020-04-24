@@ -202,7 +202,144 @@ $router->group(['prefix' =>'/marketplace'], function (Router $router) {
         'uses' => 'CategoryStoreController@destroy',
         'middleware' => 'can:marketplace.categorystores.destroy'
     ]);
+    $router->bind('favoritestore', function ($id) {
+        return app('Modules\Marketplace\Repositories\FavoriteStoreRepository')->find($id);
+    });
+    $router->get('favoritestores', [
+        'as' => 'admin.marketplace.favoritestore.index',
+        'uses' => 'FavoriteStoreController@index',
+        'middleware' => 'can:marketplace.favoritestores.index'
+    ]);
+    $router->get('favoritestores/create', [
+        'as' => 'admin.marketplace.favoritestore.create',
+        'uses' => 'FavoriteStoreController@create',
+        'middleware' => 'can:marketplace.favoritestores.create'
+    ]);
+    $router->post('favoritestores', [
+        'as' => 'admin.marketplace.favoritestore.store',
+        'uses' => 'FavoriteStoreController@store',
+        'middleware' => 'can:marketplace.favoritestores.create'
+    ]);
+    $router->get('favoritestores/{favoritestore}/edit', [
+        'as' => 'admin.marketplace.favoritestore.edit',
+        'uses' => 'FavoriteStoreController@edit',
+        'middleware' => 'can:marketplace.favoritestores.edit'
+    ]);
+    $router->put('favoritestores/{favoritestore}', [
+        'as' => 'admin.marketplace.favoritestore.update',
+        'uses' => 'FavoriteStoreController@update',
+        'middleware' => 'can:marketplace.favoritestores.edit'
+    ]);
+    $router->delete('favoritestores/{favoritestore}', [
+        'as' => 'admin.marketplace.favoritestore.destroy',
+        'uses' => 'FavoriteStoreController@destroy',
+        'middleware' => 'can:marketplace.favoritestores.destroy'
+    ]);
+    $router->bind('level', function ($id) {
+        return app('Modules\Marketplace\Repositories\LevelRepository')->find($id);
+    });
+    $router->get('levels', [
+        'as' => 'admin.marketplace.level.index',
+        'uses' => 'LevelController@index',
+        'middleware' => 'can:marketplace.levels.index'
+    ]);
+    $router->get('levels/create', [
+        'as' => 'admin.marketplace.level.create',
+        'uses' => 'LevelController@create',
+        'middleware' => 'can:marketplace.levels.create'
+    ]);
+    $router->post('levels', [
+        'as' => 'admin.marketplace.level.store',
+        'uses' => 'LevelController@store',
+        'middleware' => 'can:marketplace.levels.create'
+    ]);
+    $router->get('levels/{level}/edit', [
+        'as' => 'admin.marketplace.level.edit',
+        'uses' => 'LevelController@edit',
+        'middleware' => 'can:marketplace.levels.edit'
+    ]);
+    $router->put('levels/{level}', [
+        'as' => 'admin.marketplace.level.update',
+        'uses' => 'LevelController@update',
+        'middleware' => 'can:marketplace.levels.edit'
+    ]);
+    $router->delete('levels/{level}', [
+        'as' => 'admin.marketplace.level.destroy',
+        'uses' => 'LevelController@destroy',
+        'middleware' => 'can:marketplace.levels.destroy'
+    ]);
+    $router->bind('levelcriteria', function ($id) {
+        return app('Modules\Marketplace\Repositories\LevelCriteriaRepository')->find($id);
+    });
+    $router->get('levelcriterias', [
+        'as' => 'admin.marketplace.levelcriteria.index',
+        'uses' => 'LevelCriteriaController@index',
+        'middleware' => 'can:marketplace.levelcriterias.index'
+    ]);
+    $router->get('levelcriterias/create', [
+        'as' => 'admin.marketplace.levelcriteria.create',
+        'uses' => 'LevelCriteriaController@create',
+        'middleware' => 'can:marketplace.levelcriterias.create'
+    ]);
+    $router->post('levelcriterias', [
+        'as' => 'admin.marketplace.levelcriteria.store',
+        'uses' => 'LevelCriteriaController@store',
+        'middleware' => 'can:marketplace.levelcriterias.create'
+    ]);
+    $router->get('levelcriterias/{levelcriteria}/edit', [
+        'as' => 'admin.marketplace.levelcriteria.edit',
+        'uses' => 'LevelCriteriaController@edit',
+        'middleware' => 'can:marketplace.levelcriterias.edit'
+    ]);
+    $router->put('levelcriterias/{levelcriteria}', [
+        'as' => 'admin.marketplace.levelcriteria.update',
+        'uses' => 'LevelCriteriaController@update',
+        'middleware' => 'can:marketplace.levelcriterias.edit'
+    ]);
+    $router->delete('levelcriterias/{levelcriteria}', [
+        'as' => 'admin.marketplace.levelcriteria.destroy',
+        'uses' => 'LevelCriteriaController@destroy',
+        'middleware' => 'can:marketplace.levelcriterias.destroy'
+    ]);
+    $router->bind('leveltype', function ($id) {
+        return app('Modules\Marketplace\Repositories\LevelTypeRepository')->find($id);
+    });
+    $router->get('leveltypes', [
+        'as' => 'admin.marketplace.leveltype.index',
+        'uses' => 'LevelTypeController@index',
+        'middleware' => 'can:marketplace.leveltypes.index'
+    ]);
+    $router->get('leveltypes/create', [
+        'as' => 'admin.marketplace.leveltype.create',
+        'uses' => 'LevelTypeController@create',
+        'middleware' => 'can:marketplace.leveltypes.create'
+    ]);
+    $router->post('leveltypes', [
+        'as' => 'admin.marketplace.leveltype.store',
+        'uses' => 'LevelTypeController@store',
+        'middleware' => 'can:marketplace.leveltypes.create'
+    ]);
+    $router->get('leveltypes/{leveltype}/edit', [
+        'as' => 'admin.marketplace.leveltype.edit',
+        'uses' => 'LevelTypeController@edit',
+        'middleware' => 'can:marketplace.leveltypes.edit'
+    ]);
+    $router->put('leveltypes/{leveltype}', [
+        'as' => 'admin.marketplace.leveltype.update',
+        'uses' => 'LevelTypeController@update',
+        'middleware' => 'can:marketplace.leveltypes.edit'
+    ]);
+    $router->delete('leveltypes/{leveltype}', [
+        'as' => 'admin.marketplace.leveltype.destroy',
+        'uses' => 'LevelTypeController@destroy',
+        'middleware' => 'can:marketplace.leveltypes.destroy'
+    ]);
 // append
+
+
+
+
+
 
 
 

@@ -4,6 +4,9 @@ namespace Modules\Marketplace\Repositories\Eloquent;
 
 use Modules\Marketplace\Repositories\ThemesRepository;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
+use Modules\Marketplace\Events\ThemeWasCreated;
+use Modules\Marketplace\Events\ThemeWasUpdated;
+use Modules\Marketplace\Events\ThemeWasDeleted;
 
 class EloquentThemesRepository extends EloquentBaseRepository implements ThemesRepository
 {
@@ -158,7 +161,7 @@ class EloquentThemesRepository extends EloquentBaseRepository implements ThemesR
 
         $category = $this->model->create($data);
 
-        event(new CategoryWasCreated($category, $data));
+        event(new ThemeWasCreated($category, $data));
 
         return $this->find($category->id);
     }
@@ -173,7 +176,7 @@ class EloquentThemesRepository extends EloquentBaseRepository implements ThemesR
     {
         $category->update($data);
 
-        event(new CategoryWasUpdated($category, $data));
+        event(new ThemeWasUpdated($category, $data));
 
         return $category;
     }
@@ -181,38 +184,9 @@ class EloquentThemesRepository extends EloquentBaseRepository implements ThemesR
 
     public function destroy($model)
     {
-        event(new CategoryWasDeleted($model->id, get_class($model)));
+        event(new ThemeWasDeleted($model->id, get_class($model)));
 
         return $model->delete();
     }
 
-    /**
-     * Update the notifications for the given ids
-     * @param array $criterias
-     * @param array $data
-     * @return bool
-     */
-    public function updateItems($criterias, $data)
-    {
-        $query = $this->model->query();
-        $query->whereIn('id', $criterias)->update($data);
-        return $query;
-
-
-    }
-
-    /**
-     * Delete the notifications for the given ids
-     * @param array $criterias
-     * @return bool
-     */
-    public function deleteItems($criterias)
-    {
-        $query = $this->model->query();
-
-        $query->whereIn('id', $criterias)->delete();
-
-        return $query;
-
-    }
 }
